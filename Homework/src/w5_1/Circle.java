@@ -35,7 +35,7 @@ public class Circle extends Shape {
 	}
 	@Override
 	public String toString() {
-		return ("Circle " + id + " with perimeter " + getR());
+		return ("Circle " + id + " with radius " + getR());
 	}
 
 }

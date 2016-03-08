@@ -40,7 +40,8 @@ public class Employee implements Comparable<Employee>{
 	public void setSalary(double salary) {
 		this.salary = salary;
 	}
-	
+	//TODO: bad decision to choose name + surname as natural ordering
+	//it's better to make INN primary key and sort by PK
 	@Override
 	public int compareTo(Employee o) {
 		

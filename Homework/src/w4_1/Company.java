@@ -18,10 +18,9 @@ public class Company {
 		for (int i = 0; i < 80; i ++)
 			sb.append('*');
 		sb.append("\n");
-		Set<Employee> staffCopy = staff;
+		ArrayList<Employee> staffCopy = new ArrayList<>(staff);
 		if(comp != null) {
-			staffCopy = new TreeSet<>(comp);
-			staffCopy.addAll(staff);
+			Collections.sort(staffCopy, comp);
 		}
 		for (Employee e: staffCopy) {
 			sb.append(e);
