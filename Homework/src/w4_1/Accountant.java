@@ -1,7 +1,7 @@
 package w4_1;
 
 public class Accountant {
-	double sumSalary(Payable[] group) {
+	public double sumSalary(Payable[] group) {
 		double sal = 0.0;
 		for (Payable e: group)
 			sal += e.getSalary();

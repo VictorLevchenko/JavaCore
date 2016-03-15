@@ -1,9 +1,31 @@
 package w4_1;
 
+import java.util.Comparator;
+
 public class Employee implements Comparable<Employee>, Payable {
 	private long iNN;
 	private String name, surname;
 	protected double salary;
+	public static Comparator<Employee> iNNComparator = new Comparator<Employee>() {
+		@Override
+		public int compare(Employee o1, Employee o2) {
+			if(o1.getiNN() == o2.getiNN())
+				return 0;
+			else if(o1.getiNN() > o2.getiNN())
+				return 1;
+			return -1;
+		}
+	};
+	public static Comparator<Employee> salaryComparator = new Comparator<Employee>() {
+		@Override
+		public int compare(Employee o1, Employee o2) {
+			if(o1.getSalary() == o2.getSalary())
+				return 0;
+			else if(o1.getSalary() > o2.getSalary())
+				return 1;
+			return -1;
+		}
+	};
 	public Employee (int iNN, String name, String surname, 
 			double salary) {
 		this.setiNN(iNN);

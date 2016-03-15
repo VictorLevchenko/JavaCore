@@ -28,19 +28,19 @@ public class Task52 {
 		company.printReport(null);
 		
 		println(" Report sorted by INN\n");
-		company.printReport(new INNComparator());
+		company.printReport(Employee.iNNComparator);
 		
 		println(" Report sorted by salary\n");
-		company.printReport(new SalaryComparator());
+		company.printReport(Employee.salaryComparator);
 		
 		println("Total sallary for Company " +
 		company.getName() + " = " + company.calculateSalary() + "\n");
 		
-		println("Minimum salary has \n");
+		println("Minimum salary have \n");
 		for(Employee e: company.findMinimumPaidEmployee())
 			println(e);
 		
-		println("Maximum salary has \n");  
+		println("Maximum salary have \n");  
 		for(Employee e: company.findMaximumPaidEmployee())
 			println(e);
 		
