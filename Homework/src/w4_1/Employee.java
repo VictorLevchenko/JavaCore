@@ -1,6 +1,6 @@
 package w4_1;
 
-public class Employee implements Comparable<Employee>{
+public class Employee implements Comparable<Employee>, Payable {
 	private long iNN;
 	private String name, surname;
 	protected double salary;

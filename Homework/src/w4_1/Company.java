@@ -8,6 +8,7 @@ import java.util.*;
 public class Company {
 	private Set<Employee> staff = new TreeSet<>();
 	private String name;
+	private Accountant accountant = new Accountant();
 	public Company(String name) {
 		this.setName(name);
 	}
@@ -60,10 +61,9 @@ public class Company {
 			return empl;
 	}
 	public double calculateSalary() {
-		double sal = 0.0;
-		for (Employee e: staff)
-			sal += e.getSalary();
-		return sal;
+		
+		Payable[] group = new Payable[staff.toArray().length]; 
+		return accountant.sumSalary(this.staff.toArray(group));
 	}
 	public void printReport(Comparator<Employee> comp) {
 		println(makeReport(comp));
