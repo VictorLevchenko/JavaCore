@@ -21,7 +21,7 @@ public class FileStat  {
 	private int numberOfSentences;
 	private int numberOfLines;
 	
-	public FileStat(String fileName) throws IOException {
+	public FileStat(String fileName) throws IOException { 
 		this.fileName = fileName;
 		getStatistics(fileName);
 	}
