@@ -13,15 +13,15 @@ public class Notepad {
 		//dateString should be in DATE_FORMAT
 		private Note(String text, String dateString) throws ParseException {
 			SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-			this.date = sdf.parse(dateString);
-			this.text = text;
+			setDate(sdf.parse(dateString));
+			setText(text);
 		}
 		//without explicit date will be current date
 		private Note(String text) throws ParseException {
 			this(text, (new SimpleDateFormat(DATE_FORMAT)).format(new Date()));
 		}
 		public String toString() {
-			return (date + " ---> " + text);
+			return (date + " ---> " + getText());
 		}
 		private Date getDate() {
 			return date;

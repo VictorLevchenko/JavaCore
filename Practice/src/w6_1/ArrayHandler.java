@@ -56,7 +56,7 @@ public class ArrayHandler<T extends Number>  {
 	public static void main(String[] args) throws NoSuchMethodException,
 	SecurityException, IllegalAccessException, IllegalArgumentException,
 	InvocationTargetException {
-		Integer[] integerArray = {-1, 1, 2, 3, 4, 5};
+		Integer[] integerArray = {-1, 1, 2, 3, 4, 5}; 
 		Double[] doubleArray = {-1.0, 1.0, 2.0, 3.0, 4.0, 5.0};
 		
 		ArrayHandler<Number> handl = new ArrayHandler<>();
