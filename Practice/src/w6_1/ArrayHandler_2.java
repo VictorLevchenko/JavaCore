@@ -1,4 +1,4 @@
-
+package w6_1;
 public class ArrayHandler_2<T extends Number>  {
 	
 	public  T maxElement(T[] array) {

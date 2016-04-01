@@ -124,15 +124,16 @@ class SimplePanel extends JPanel {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		Graphics2D g2D = (Graphics2D)g;
 		for(Ball b : ballList) {
 			b.setxMax(this.getWidth());
 			b.setyMax(this.getHeight());
-			g.fillOval((int)b.getCurrentX(),(int) b.getCurrentY(), (int)b.getRadius(),(int) b.getRadius());
+			g2D.fillOval((int)b.getCurrentX(),(int) b.getCurrentY(), (int)b.getRadius(),(int) b.getRadius());
 		}
 	}
 	
 }
-class Ball  {
+class Ball implements Runnable {
 	private double x, xMax;
 	private double y, yMax;
 	private double radius;
@@ -200,5 +201,10 @@ class Ball  {
 	}
 	double getDeltaY() {
 		return deltaY;
+	}
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
 	}
 }

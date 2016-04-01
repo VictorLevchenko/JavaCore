@@ -36,12 +36,10 @@ public class FileStat  {
 			sb.append(s);
 			wordCount += s.split(" ").length; 
 		}
-		
 		Pattern p = Pattern.compile("[.!?]");
 		Matcher m = p.matcher(sb.toString());
-		while(m.find()) {
-				sentenceCount++;
-		}
+		while(m.find()) 
+			sentenceCount++;
 		symbolCount = sb.toString().length() + lineCount - 1;
 		
 		numberOfLines =  lineCount;
@@ -66,12 +64,17 @@ public class FileStat  {
 	public int getNumberOfLines() {
 		return numberOfLines;
 	}
+	public String toString() {
+		return new String(
+			getFileName() + "\n" +
+			"Number of symbols \t" + getNumberOfSymbols() + "\n" +
+			"Number of words \t" + getNumberOfWords() + "\n" +
+			"Number of sentences \t" + getNumberOfSentences() + "\n" +
+			"Number of lines \t" + getNumberOfLines()		
+		); 
+	}
 	public void printStatistics(PrintStream ps) {
-		ps.println(getFileName());
-		ps.println("Number of symbols \t" + getNumberOfSymbols());
-		ps.println("Number of words \t" + getNumberOfWords());
-		ps.println("Number of sentences \t" + getNumberOfSentences());
-		ps.println("Number of lines \t" + getNumberOfLines());
+		ps.println(this);
 	}
 	public void update() throws IOException {
 		getStatistics(getFileName());
@@ -79,6 +82,7 @@ public class FileStat  {
 	public static void main(String[] args) throws IOException {
 		
 		FileStat fileStat = new FileStat(args[0]);
+		System.out.println(fileStat);
 		fileStat.printStatistics(System.out);
 		fileStat.update();
 		fileStat.printStatistics(new PrintStream(new FileOutputStream(fileStat.getFileName() + ".stat")));
