@@ -1,7 +1,11 @@
 package w6_1;
 
+import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.util.Timer;
 
@@ -21,18 +25,14 @@ public class Bouncing {
 			@Override
 			public void run() {
 				createGui();
-				
 			}
-			
 		});
-
 	}
 	public static void createGui() {
 		SimpleFrame mainFrame= new SimpleFrame();
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.setVisible(true);
 	}
-
 }
 
 class SimpleFrame extends JFrame {
@@ -64,7 +64,16 @@ class SimpleFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Ball b = new Ball(RADIUS).setSpeed(DELTA_X, DELTA_Y).setBound(WIDTH, HEIGHT);
-				p.ballList.add(b);
+				//TODO: fix funny collisions on start
+				boolean isCollision = false;
+				for(Ball bl: p.ballList) {
+					if(b.collision(bl)) {
+						isCollision = true;
+						break;
+					}
+				}
+				if(!isCollision) 
+					p.ballList.add(b);
 			}
 			
 		});
@@ -90,10 +99,25 @@ class SimpleFrame extends JFrame {
 		});
 		this.add(p, BorderLayout.CENTER);
 		buttonPanel = new JPanel();
-		buttonPanel.add(butAdd);
-		buttonPanel.add(butDel);
-		buttonPanel.add(butSlow);
-		buttonPanel.add(butFast);
+		buttonPanel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 1;
+		c.gridx = 0;
+		c.gridy = 0;
+		buttonPanel.add(butAdd, c);
+		c.weightx = 1;
+		c.gridx = 1;
+		c.gridy = 0;
+		buttonPanel.add(butDel, c);
+		c.weightx = 1;
+		c.gridx = 2;
+		c.gridy = 0;
+		buttonPanel.add(butSlow, c);
+		c.weightx = 1;
+		c.gridx = 3;
+		c.gridy = 0;
+		buttonPanel.add(butFast, c);
 		this.add(buttonPanel, BorderLayout.SOUTH);
 	}
 }
@@ -101,7 +125,14 @@ class SimpleFrame extends JFrame {
 class SimplePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	ArrayList<Ball> ballList = new ArrayList<>();
+	AudioClip bounceClip = null;
 	SimplePanel() {
+		try {
+			bounceClip = Applet.newAudioClip(new File("BallCollision1.wav").toURI().toURL());
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			@Override
@@ -122,19 +153,26 @@ class SimplePanel extends JPanel {
 			b.move();
 			ballSet.remove(b);
 			//check for collision with other balls
-			//TODO: remove funny collisions
+			//TODO: remove funny collisions on start
 			for(Ball bs: ballSet){
 				if(b.collision(bs)) {
-						b.setDeltaX(-b.getDeltaX());
-						b.setDeltaY(-b.getDeltaY());
-						bs.setDeltaX(-bs.getDeltaX());
-						bs.setDeltaY(-bs.getDeltaY());
+					(new Thread() {
+						@Override
+						public void run() {
+							bounceClip.play();
+						}
+					}).start();;
+					
 					b.setColor(new Color((int)(Math.random() * 0x1000000)));
 					bs.setColor(new Color((int)(Math.random() * 0x1000000)));
-					
+					b.setDeltaX(-b.getDeltaX());
+					b.setDeltaY(-b.getDeltaY());
+					b.undoMove();
+					bs.setDeltaX(-bs.getDeltaX());
+					bs.setDeltaY(-bs.getDeltaY());
+					bs.undoMove();
 				}
 			}
-			
 			b.setxMax(this.getWidth());
 			b.setyMax(this.getHeight());
 			g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -148,6 +186,13 @@ class SimplePanel extends JPanel {
 class Ball   {
 	private double x, xMax;
 	private Color color = Color.black;
+	private double y, yMax;
+	private double radius;
+	private double deltaX, deltaY;
+	private double oldX, oldY;
+	private double speed = 1;
+	public static final double DELTA_SPEED = 0.1;
+	
 	public double getX() {
 		return x;
 	}
@@ -160,11 +205,19 @@ class Ball   {
 	public void setY(double y) {
 		this.y = y;
 	}
-	private double y, yMax;
-	private double radius;
-	private double deltaX, deltaY;
-	private double speed = 1;
-	public static final double DELTA_SPEED = 0.1;
+	public double getOldX() {
+		return oldX;
+	}
+	public void setOldX(double oldX) {
+		this.oldX = oldX;
+	}
+	public double getOldY() {
+		return oldY;
+	}
+	public void setOldY(double oldY) {
+		this.oldY = oldY;
+	}
+	
 	Ball(double r) {
 		this.radius = r;
 	}
@@ -204,7 +257,11 @@ class Ball   {
 		if(Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2)) < 
 				(b.getRadius() + this.getRadius())) 
 			result = true;
-			return result;
+		return result;
+	}
+	public void undoMove() {
+		this.setX(oldX);
+		this.setY(oldY);
 	}
 	public void move() {
 		
@@ -212,7 +269,7 @@ class Ball   {
 		if(x < radius) {
 			this.setDeltaX(-this.getDeltaX());
 			x = radius;
-		} else if((x +getDeltaX() + radius) > xMax) {
+		} else if((x + getDeltaX() + radius) > xMax) {
 			this.setDeltaX(-this.getDeltaX());
 			x = xMax - radius;
 		}
@@ -224,6 +281,8 @@ class Ball   {
 			this.setDeltaY(-this.getDeltaY());
 			y = yMax - radius;
 		}
+		this.setOldX(this.x);
+		this.setOldY(this.y);
 		this.y = y;
 		this.x = x;
 	}
@@ -254,5 +313,4 @@ class Ball   {
 	public void setColor(Color color) {
 		this.color = color;
 	}
-
 }
