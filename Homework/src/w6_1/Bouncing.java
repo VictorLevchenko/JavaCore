@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 import java.util.Timer;
 
@@ -37,22 +36,27 @@ public class Bouncing {
 
 class SimpleFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private SimplePanel p;
-	private JPanel buttonPanel;
-	private JButton butAdd, butDel, butSlow, butFast ;
 	private static final int WIDTH = 500; 
 	private static final int HEIGHT = 400;
 	private static final double RADIUS = 15;
 	private static  final double DELTA_X = 0.5;
     private static final double DELTA_Y = 0.5;
+    public static final double DELTA_SPEED = 0.1;
+	private SimplePanel p;
+	private JPanel buttonPanel;
+	private JButton butAdd, butDel, butSlow, butFast ;
+	
 	SimpleFrame() {
 		this.setSize(WIDTH, HEIGHT);
 		this.setTitle("Bouncing ball");
+		
 		p = new SimplePanel();
+		
 		butAdd = new JButton("Add ball");
 		butDel = new JButton("Delete ball");
 		butSlow = new JButton("Speed -");
 		butFast = new JButton("Spreed +");
+		
 		butDel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -83,7 +87,7 @@ class SimpleFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				for(Ball b: p.ballList) {
-					double sp = b.getSpeed() - Ball.DELTA_SPEED;
+					double sp = b.getSpeed() - DELTA_SPEED;
 					b.setSpeed((sp < 0) ? 0 : sp);
 				}
 			}
@@ -93,7 +97,7 @@ class SimpleFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				for(Ball b: p.ballList) {
-					b.setSpeed(b.getSpeed() + Ball.DELTA_SPEED);
+					b.setSpeed(b.getSpeed() + DELTA_SPEED);
 				}
 			}
 		});
@@ -124,6 +128,7 @@ class SimpleFrame extends JFrame {
 
 class SimplePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
+	private static final long FRAME_RATE = 10;
 	ArrayList<Ball> ballList = new ArrayList<>();
 	AudioClip bounceClip = null;
 	SimplePanel() {
@@ -140,7 +145,7 @@ class SimplePanel extends JPanel {
 				
 				repaint();
 			}
-		}, 0, 10);
+		}, 0, FRAME_RATE);
 
 	}
 
@@ -150,6 +155,8 @@ class SimplePanel extends JPanel {
 		Graphics2D g2D = (Graphics2D)g;
 		HashSet<Ball> ballSet = new HashSet<>(ballList);
 		for(Ball b : ballList) {
+			b.setxMax(this.getWidth());
+			b.setyMax(this.getHeight());
 			b.move();
 			ballSet.remove(b);
 			//check for collision with other balls
@@ -163,8 +170,8 @@ class SimplePanel extends JPanel {
 						}
 					}).start();;
 					
-					b.setColor(new Color((int)(Math.random() * 0x1000000)));
-					bs.setColor(new Color((int)(Math.random() * 0x1000000)));
+					b.setColor(new Color((int)(Math.random() * 0xffffff)));
+					bs.setColor(new Color((int)(Math.random() * 0xffffff)));
 					b.setDeltaX(-b.getDeltaX());
 					b.setDeltaY(-b.getDeltaY());
 					b.undoMove();
@@ -173,8 +180,7 @@ class SimplePanel extends JPanel {
 					bs.undoMove();
 				}
 			}
-			b.setxMax(this.getWidth());
-			b.setyMax(this.getHeight());
+			
 			g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 					RenderingHints.VALUE_ANTIALIAS_ON);
 			g2D.setColor(b.getColor());
@@ -191,7 +197,6 @@ class Ball   {
 	private double deltaX, deltaY;
 	private double oldX, oldY;
 	private double speed = 1;
-	public static final double DELTA_SPEED = 0.1;
 	
 	public double getX() {
 		return x;
@@ -263,6 +268,7 @@ class Ball   {
 		this.setX(oldX);
 		this.setY(oldY);
 	}
+	//TODO: add collision  mass dependency
 	public void move() {
 		
 		double x = this.x + getDeltaX() * this.speed;
