@@ -68,12 +68,13 @@ class SimpleFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Ball b = new Ball(RADIUS).setSpeed(DELTA_X, DELTA_Y).setBound(WIDTH, HEIGHT);
+				b.changeRandomColor();
 				//TODO: fix funny collisions on start
 				boolean isCollision = false;
 				for(Ball bl: p.ballList) {
 					if(b.collision(bl)) {
 						isCollision = true;
-						break;
+						return;
 					}
 				}
 				if(!isCollision) 
@@ -131,11 +132,14 @@ class SimplePanel extends JPanel {
 	private static final long FRAME_RATE = 10;
 	ArrayList<Ball> ballList = new ArrayList<>();
 	AudioClip bounceClip = null;
+	AudioClip explodeClip = null;
 	SimplePanel() {
-		try {
-			bounceClip = Applet.newAudioClip(new File("BallCollision1.wav").toURI().toURL());
+		try {	
+			explodeClip = Applet.newAudioClip(
+					new File("Explode1.wav").toURI().toURL());
+			bounceClip = Applet.newAudioClip(
+						new File("BallCollision1.wav").toURI().toURL());
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		Timer timer = new Timer();
@@ -168,16 +172,30 @@ class SimplePanel extends JPanel {
 						public void run() {
 							bounceClip.play();
 						}
-					}).start();;
-					
-					b.setColor(new Color((int)(Math.random() * 0xffffff)));
-					bs.setColor(new Color((int)(Math.random() * 0xffffff)));
-					b.setDeltaX(-b.getDeltaX());
-					b.setDeltaY(-b.getDeltaY());
-					b.undoMove();
-					bs.setDeltaX(-bs.getDeltaX());
-					bs.setDeltaY(-bs.getDeltaY());
-					bs.undoMove();
+					}).start();
+					int c1 = b.getColor().getRGB();
+					int c2 = bs.getColor().getRGB();
+					if(c1 == c2) {
+						//explode
+						(new Thread() {
+							@Override
+							public void run() {
+								explodeClip.play();
+							}
+						}).start();
+						b.setExploded(true);
+						bs.setExploded(true);
+						
+					} else {
+						b.changeRandomColor();
+						bs.changeRandomColor();
+						b.setDeltaX(-b.getDeltaX());
+						b.setDeltaY(-b.getDeltaY());
+						b.undoMove();
+						bs.setDeltaX(-bs.getDeltaX());
+						bs.setDeltaY(-bs.getDeltaY());
+						bs.undoMove();
+					}
 				}
 			}
 			
@@ -185,6 +203,11 @@ class SimplePanel extends JPanel {
 					RenderingHints.VALUE_ANTIALIAS_ON);
 			g2D.setColor(b.getColor());
 			g2D.fillOval((int)b.getX(),(int) b.getY(), (int)(b.getRadius() * 2),(int)(b.getRadius() * 2));
+			
+			}
+		for(Iterator<Ball> iterator = ballList.iterator(); iterator.hasNext();) {
+			Ball b = iterator.next();
+			if(b.isExploded()) iterator.remove();
 		}
 	}
 	
@@ -197,6 +220,7 @@ class Ball   {
 	private double deltaX, deltaY;
 	private double oldX, oldY;
 	private double speed = 1;
+	private boolean exploded = false;
 	
 	public double getX() {
 		return x;
@@ -318,5 +342,15 @@ class Ball   {
 	}
 	public void setColor(Color color) {
 		this.color = color;
+	}
+	public void changeRandomColor() {
+		int rand = (int)(Math.random() * 3); 
+		setColor(new Color(getColor().getRGB() ^ (0xff << (8*rand))));
+	}
+	public boolean isExploded() {
+		return exploded;
+	}
+	public void setExploded(boolean exploded) {
+		this.exploded = exploded;
 	}
 }
