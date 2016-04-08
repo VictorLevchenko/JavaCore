@@ -14,8 +14,8 @@ public class Parking {
 	}
 	public boolean checkIn(String s) {
 		Car car = new Car(s);
-		int pN = -1;
-		if((pN = findEmptySpot()) != -1) {
+		int pN = - 1;
+		if((pN = findEmptySpot()) != - 1) {
 			car.setSpot(pN);
 			occupied.add(car);
 			return true;
@@ -27,7 +27,7 @@ public class Parking {
 	private int findEmptySpot() {
 		int spot = 0;
 		if(occupied.size() == capacity) 
-			return -1;
+			return - 1;
 		else {
 			
 			Iterator<Car> it = occupied.iterator();
@@ -93,9 +93,9 @@ public class Parking {
 		Parking parking = new Parking(NUM);
 		Random rnd = new Random();
 		for(int i = 0; i < 3; i++) {
-			parking.checkIn("Car"); System.out.println(parking);
-			parking.checkIn("Car"); System.out.println(parking);
-			parking.checkIn("Car"); System.out.println(parking);
+			parking.checkIn("Car"); System.out.println("In *** " + parking);
+			parking.checkIn("Car"); System.out.println("In *** " + parking);
+			parking.checkIn("Car"); System.out.println("In *** " + parking);
 			int n = rnd.nextInt(parking.getOccupiedSpace());
 			parking.checkOut(n); System.out.println("Out from " + n + " *** " + parking);
 			 n = rnd.nextInt(parking.getOccupiedSpace());
