@@ -75,7 +75,8 @@ public class ATM {
 				case GET_MONEY_OPTION:
 					
 					int minCash = atm.totalCash(listNotes);
-					int maxCash = minCash + atm.findMinimumAvailableNote();
+					int minAddCash =  atm.findMinimumAvailableNote(listNotes);
+					int maxCash = (minAddCash > minCash)? minAddCash: minCash + minAddCash;
 					System.out.print(
 							"Sorry, we can't give you your demand \n" +
 							"We suggest to get following "
@@ -134,10 +135,13 @@ public class ATM {
 		}
 		System.out.println("Total cash: " + totalCash());
 	}
-	//find bank note with minimum nominal
-	private int findMinimumAvailableNote() {
+	//find bank note with minimum nominal after 
+	private int findMinimumAvailableNote(List<Integer> list) {
 		
 		TreeMap<Integer, Integer> newBankNotes = new TreeMap<>(bankNotes);
+		for(Integer e: list) {
+			newBankNotes.put(e, newBankNotes.get(e) - 1);
+		}
 		for (Integer nk: newBankNotes.descendingKeySet()) {
 			if(newBankNotes.get(nk) != 0) return nk;
 		}
