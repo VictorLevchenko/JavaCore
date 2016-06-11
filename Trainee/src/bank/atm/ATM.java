@@ -65,7 +65,6 @@ public class ATM {
 						if(atm.totalCash(listNotes) == amount) {
 							System.out.println(" Please get your money");
 							System.out.println(atm.withdraw(amount));
-							//account.withdraw(amount);
 							state = State.INIT;
 							break;
 						} else {
