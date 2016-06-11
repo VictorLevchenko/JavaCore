@@ -83,7 +83,7 @@ public class ATM {
 					);
 					if(minCash != 0)
 						System.out.print(minCash + " ");
-					if(maxCash != 0 && maxCash != minCash && maxCash < atm.totalCash())
+					if(maxCash != 0 && maxCash != minCash)
 						System.out.println(maxCash);
 					state = State.INIT;
 				break;
@@ -135,7 +135,7 @@ public class ATM {
 		}
 		System.out.println("Total cash: " + totalCash());
 	}
-	//find bank note with minimum nominal after 
+	//find bank note with minimum nominal after trySatisfyDeman
 	private int findMinimumAvailableNote(List<Integer> list) {
 		
 		TreeMap<Integer, Integer> newBankNotes = new TreeMap<>(bankNotes);
