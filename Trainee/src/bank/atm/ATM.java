@@ -9,14 +9,14 @@ public class ATM {
 	enum State { INIT, GET_MONEY, GET_MONEY_OPTION,
 		REPORT, ATM_EMPTY}
 	private static State state = State.INIT;
-	private static Account account;
+	private  Account account;
 	//map to hold banknotes in pairs (banknote, amount)
 	private TreeMap<Integer, Integer> bankNotes = new TreeMap<>(Collections.reverseOrder());
 	
 	public static void main(String[] args) {
 		
 		ATM atm = new ATM();
-		account = new Account(1000);
+		atm.account = new Account(1000);
 		atm.fill(5, 1);
 		atm.fill(10, 1);
 		atm.fill(20, 1);
@@ -56,7 +56,7 @@ public class ATM {
 					System.out.println(
 							"How much money do you want? : ");
 					int amount = in.nextInt();
-					if(!account.insureEnoughMoney(amount)) {
+					if(!atm.account.insureEnoughMoney(amount)) {
 						System.out.println("You don't have enough money on your account");
 						state = State.INIT;
 						break;
@@ -65,7 +65,7 @@ public class ATM {
 						if(atm.totalCash(listNotes) == amount) {
 							System.out.println(" Please get your money");
 							System.out.println(atm.withdraw(amount));
-							account.withdraw(amount);
+							//account.withdraw(amount);
 							state = State.INIT;
 							break;
 						} else {
@@ -89,7 +89,7 @@ public class ATM {
 				break;
 			case REPORT:
 				atm.printBankNotesReport();
-				account.printBalance();
+				atm.account.printBalance();
 				state = State.INIT;
 				break;
 			case ATM_EMPTY:
@@ -147,6 +147,7 @@ public class ATM {
 	// give money to customer and update his account
 	//return list of banknotes
 	public List<Integer> withdraw(int amount) {
+		int amountCopy = amount;
 		List<Integer> noteList = new ArrayList<>();
 		for (Integer nk: bankNotes.keySet()) {
 			int quantity = bankNotes.get(nk);
@@ -156,7 +157,8 @@ public class ATM {
 				noteList.add(nk);
 			}
 		}
-		account.withdraw(amount); //update account
+		account.withdraw(amountCopy); //update account
+		
 		return noteList;
 	}
 	//return list of notes from ATM that is lower or equal to demand
