@@ -258,16 +258,12 @@ public class DatabaseHandler {
 		}
 		PreparedStatement ps = null;
 		try{
-			//update  person
-			//set name = 'Donald Trump'
-			//where person_id = '0000000002';
-		String request = "UPDATE " + PERSON_TABLE + " SET " + PERSON_PHOTO + " = ? WHERE " + PERSON_ID + " = ?";
-		//System.out.println(request);
-		ps = con.prepareStatement(request);
-		ps.setString(2, person_id);
-		ps.setBinaryStream(1, fis, file.length());
-		ps.executeUpdate();
-		
+			String request = "UPDATE " + PERSON_TABLE + " SET " + PERSON_PHOTO + " = ? WHERE " + PERSON_ID + " = ?";
+			//System.out.println(request);
+			ps = con.prepareStatement(request);
+			ps.setString(2, person_id);
+			ps.setBinaryStream(1, fis, file.length());
+			ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			
